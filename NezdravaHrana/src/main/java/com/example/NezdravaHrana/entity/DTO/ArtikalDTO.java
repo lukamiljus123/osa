@@ -19,6 +19,8 @@ public class ArtikalDTO {
 
     private String putanjaSlike;
 
+    private String prodavacNaziv;
+
     private Integer prodavacId;
 
     public ArtikalDTO(Artikal artikal){
@@ -27,6 +29,7 @@ public class ArtikalDTO {
         this.opis = artikal.getOpis();
         this.cena = artikal.getCena();
         this.putanjaSlike = artikal.getPutanjaSlike();
+        this.prodavacNaziv = artikal.getProdavac().getNaziv();
         this.prodavacId = artikal.getProdavac().getKorisnik().getId();
     }
 }

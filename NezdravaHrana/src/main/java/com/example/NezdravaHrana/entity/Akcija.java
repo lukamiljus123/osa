@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import java.sql.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -32,5 +31,10 @@ public class Akcija {
     @ManyToOne
     private Prodavac prodavac;
 
-    // meni tu meni sa artiklom
+    @ManyToMany
+    @JoinTable(
+            name = "akcija_artikli",
+            joinColumns = @JoinColumn(name = "akcija_id"),
+            inverseJoinColumns = @JoinColumn(name = "artikal_id"))
+    private Set<Artikal> artikli = new HashSet<>();
 }

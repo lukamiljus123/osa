@@ -33,6 +33,6 @@ public class Porudzbina {
     @ManyToOne
     private Kupac kupac;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Stavka> stavke = new HashSet<>();
 }

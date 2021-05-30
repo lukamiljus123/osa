@@ -1,11 +1,13 @@
 package com.example.NezdravaHrana.service;
 
+import com.example.NezdravaHrana.entity.Korisnik;
 import com.example.NezdravaHrana.entity.Prodavac;
 import com.example.NezdravaHrana.repository.ProdavacRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProdavacService {

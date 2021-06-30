@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Image, Toast} from "react-bootstrap";
-import greatSuccess from "../pictures/greatSuccess.png";
+import andItsGone from "../../pictures/andItsGone.jpg";
 
 export default class MyToast extends Component{
 
@@ -23,7 +23,7 @@ export default class MyToast extends Component{
                     </Toast.Header>
                     <Toast.Body>
                         {this.props.children.message}
-                        <Image className={"greatSuccess"} src={greatSuccess} thumbnail />
+                        <Image className={"greatSuccess"} src={andItsGone} thumbnail />
                     </Toast.Body>
 
                 </Toast>

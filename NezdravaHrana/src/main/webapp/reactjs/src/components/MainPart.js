@@ -16,6 +16,12 @@ export default class SviArtikli extends React.Component {
                         ?
                         <p>
                             {
+                                AuthenticationService.getRole() === "ROLE_ADMINISTRATOR" &&
+                                <a className="btn btn-primary" href="/blokiranje" role="button">
+                                    Управљање корисницима
+                                </a>
+                            }
+                            {
                                 AuthenticationService.getRole() === "ROLE_PRODAVAC" &&
                                 <a className="btn btn-primary" href="/dodavanje-artikla" role="button">
                                     Додавање артикла

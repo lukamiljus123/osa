@@ -4,6 +4,7 @@ import com.example.NezdravaHrana.entity.Artikal;
 import com.example.NezdravaHrana.entity.DTO.ArtikalDTO;
 import com.example.NezdravaHrana.entity.Korisnik;
 import com.example.NezdravaHrana.entity.Prodavac;
+import com.example.NezdravaHrana.entity.Roles;
 import com.example.NezdravaHrana.service.ArtikalService;
 import com.example.NezdravaHrana.service.ProdavacService;
 import com.example.NezdravaHrana.service.UserService;
@@ -45,6 +46,29 @@ public class ArtikalController {
         return new ResponseEntity<>(new ArtikalDTO(artikal),HttpStatus.OK);
     }
 
+    @GetMapping("/prodavca/{prodavacId}")
+    public ResponseEntity<Collection<ArtikalDTO>> findArtikliProdavca(Authentication authentication, @PathVariable("prodavacId") Integer prodavacId) {
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+            String username = userPrincipal.getUsername();
+            Korisnik korisnik = userService.findByUsername(username); // prodavac
+
+            if (korisnik.getRoles().equals(Roles.PRODAVAC)) {
+                prodavacId = korisnik.getId();
+            }
+        }
+
+        List<Artikal> artikli = artikalService.findAll();
+        List<ArtikalDTO> artikliDTO = new ArrayList<>();
+        for (Artikal a: artikli) {
+            if (a.getProdavac().getId().equals(prodavacId)) {
+                artikliDTO.add(new ArtikalDTO(a));
+            }
+        }
+        return new ResponseEntity<>(artikliDTO, HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<Collection<ArtikalDTO>> findAll() {
         List<Artikal> artikli = artikalService.findAll();
@@ -57,7 +81,7 @@ public class ArtikalController {
 
     @PreAuthorize("hasAnyRole('PRODAVAC')")
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<ArtikalDTO> snimiArtikal(@RequestBody ArtikalDTO artikalDTO, Authentication authentication){
+    public ResponseEntity<ArtikalDTO> snimiArtikal (@RequestBody ArtikalDTO artikalDTO, Authentication authentication) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
         String username = userPrincipal.getUsername();
         Korisnik korisnik = userService.findByUsername(username); // prodavac
@@ -82,7 +106,14 @@ public class ArtikalController {
 
     @PreAuthorize("hasAnyRole('PRODAVAC')")
     @PutMapping(consumes = "application/json")
-    public ResponseEntity<ArtikalDTO> izmeniArtikal(@RequestBody ArtikalDTO artikalDTO) {
+    public ResponseEntity<ArtikalDTO> izmeniArtikal(@RequestBody ArtikalDTO artikalDTO, Authentication authentication) {
+        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+        String username = userPrincipal.getUsername();
+        Korisnik korisnik = userService.findByUsername(username); // prodavac
+        if (!artikalService.findOne(artikalDTO.getId()).getProdavac().getId().equals(korisnik.getId())) {
+            return new ResponseEntity<ArtikalDTO>(HttpStatus.BAD_REQUEST);
+        }
+
         Artikal artikal = artikalService.findOne(artikalDTO.getId());
         if (artikal == null) {
             return new ResponseEntity<ArtikalDTO>(HttpStatus.BAD_REQUEST);

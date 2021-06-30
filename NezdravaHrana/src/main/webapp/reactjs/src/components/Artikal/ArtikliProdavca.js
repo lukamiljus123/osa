@@ -3,10 +3,11 @@ import {Button, Card, Col, Container, Image, Row} from "react-bootstrap";
 import NezdravaHranaAxiosClient from "../../services/clients/NezdravaHranaAxiosClient";
 import MainPart from "../MainPart";
 import {TokenService} from "../../services/TokenService";
-import GoneToast from "../GoneToast";
+import GoneToast from "../Toasts/GoneToast";
 import {AuthenticationService} from "../../services/AuthenticationService";
+import { withRouter } from "react-router";
 
-export default class SviArtikli extends React.Component {
+export default class ArtikliProdavca extends React.Component {
 
     constructor(props) {
         super(props);
@@ -20,7 +21,16 @@ export default class SviArtikli extends React.Component {
     }
 
     findAllArtikli() {
-        NezdravaHranaAxiosClient.get("http://localhost:8080/artikli")
+        let url = "http://localhost:8080/artikli/prodavca/";
+        if (AuthenticationService.getRole() === "ROLE_PRODAVAC") {
+            url += "1";
+        } else {
+            let lokacija = window.location.href;
+            lokacija = lokacija.replace("http://localhost:3000/artikli-prodavca/", "");
+            url += lokacija;
+        }
+
+        NezdravaHranaAxiosClient.get(url)
             .then(response => response.data)
             .then((data) => {
                 this.setState({
@@ -54,6 +64,7 @@ export default class SviArtikli extends React.Component {
                 </div>
                 <MainPart/>
                 <Card className={"border border-dark bg-dark text-white"}>
+
                     <Card.Header><h3>Листа артикала</h3></Card.Header>
                     <Card.Body>
                         <Row>

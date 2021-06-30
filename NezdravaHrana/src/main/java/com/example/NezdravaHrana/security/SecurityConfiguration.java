@@ -75,8 +75,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/korisnici/registracija/{isProdavac}").permitAll()
                 .antMatchers(HttpMethod.POST, "/korisnici/prijava").permitAll()
                 .antMatchers(HttpMethod.POST, "/korisnici").permitAll()
+                .antMatchers(HttpMethod.GET, "/prodavci").permitAll()
                 .antMatchers(HttpMethod.GET, "/artikli").permitAll()
                 .antMatchers(HttpMethod.GET, "/artikli/{id}").permitAll()
+                .antMatchers(HttpMethod.GET, "/artikli/prodavca/{id}").permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

@@ -1,7 +1,8 @@
 import React from "react";
 import {Card, Form, Col, Button} from "react-bootstrap";
-import MyToast from "../MyToast";
+import MyToast from "../Toasts/MyToast";
 import NezdravaHranaAxiosClient from "../../services/clients/NezdravaHranaAxiosClient";
+import ShallNotToast from "../Toasts/ShallNotToast";
 
 export default class IzmenaArtikla extends React.Component {
 
@@ -9,6 +10,7 @@ export default class IzmenaArtikla extends React.Component {
         super(props);
         this.state = this.initialState;
         this.state.show = false;
+        this.state.shallShow = false;
         this.artikalChange = this.artikalChange.bind(this);
         this.submitArtikal = this.submitArtikal.bind(this);
     }
@@ -61,7 +63,10 @@ export default class IzmenaArtikla extends React.Component {
                     } else {
                         this.setState({"show":false});
                     }
-                });
+                }).catch((error) => {
+                    this.setState({"shallShow":true});
+                    setTimeout(() => this.setState({"shallShow":false}),3000);
+            });
         } else {
             NezdravaHranaAxiosClient.post("http://localhost:8080/artikli", artikal)
                 .then(response => {
@@ -95,6 +100,9 @@ export default class IzmenaArtikla extends React.Component {
                         :
                         <MyToast children={{show: this.state.show, message:"Успешно сте додали артикал!"}}/>
                     }
+                </div>
+                <div style={{"display":this.state.shallShow ? "block" : "none"}}>
+                    <ShallNotToast children={{shallShow: this.state.shallShow, message:"Добар покушај"}}/>
                 </div>
                 <Card style={{ width: '69rem', margin: 'auto'}} className={"border border-dark bg-dark text-white"}>
                     <Card.Header style={{"textAlign":"center"}}>

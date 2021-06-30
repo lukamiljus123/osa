@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,11 +56,14 @@ public class KorisnikController {
     @Autowired
     TokenUtils tokenUtils;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     @GetMapping("/{id}")
     public ResponseEntity<KorisnikDTO> findOne(@PathVariable("id") Integer id) {
         Korisnik korisnik = korisnikRepository.findById(id).orElse(null);
-        if (korisnik == null) {
+        if (korisnik == null || korisnik.isBlokiran()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -72,20 +76,46 @@ public class KorisnikController {
         List<Korisnik> korisnici = korisnikRepository.findAll();
         List<KorisnikDTO> korisniciDTO = new ArrayList<>();
         for (Korisnik k: korisnici) {
-            korisniciDTO.add(new KorisnikDTO(k));
+            if (!k.isBlokiran()) {
+                korisniciDTO.add(new KorisnikDTO(k));
+            }
         }
         return new ResponseEntity<>(korisniciDTO, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
+    @GetMapping("blokiranje")
+    public ResponseEntity<Collection<KorisnikDTO>> findAllNonAdmins() {
+        List<Korisnik> korisnici = korisnikRepository.findAll();
+        List<KorisnikDTO> korisniciDTO = new ArrayList<>();
+        for (Korisnik k: korisnici) {
+            if (!k.getRoles().equals(Roles.ADMINISTRATOR) && !k.isBlokiran()) {
+                korisniciDTO.add(new KorisnikDTO(k));
+            }
+        }
+        return new ResponseEntity<>(korisniciDTO, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
+    @PutMapping("blokiraj/{id}")
+    public ResponseEntity<Korisnik> blokiraj(@PathVariable Integer id) {
+        Korisnik k = korisnikRepository.findById(id).orElse(null);
+        if (k == null) {
+            return ResponseEntity.notFound().build();
+        }
+        k.setBlokiran(!k.isBlokiran());
+        korisnikRepository.save(k);
+        return new ResponseEntity<>(k, HttpStatus.CREATED);
     }
 
     @PostMapping("/registracija/{isProdavac}")
     public ResponseEntity<RegistracijaDTO> registracija (@RequestBody RegistracijaDTO registracijaDTO,
                                                         @PathVariable boolean isProdavac) {
-        // samo cemo koristi hash za sifru
-
         Korisnik noviKorisnik = new Korisnik();
 
         noviKorisnik.setUsername(registracijaDTO.getUsername());
-        noviKorisnik.setPassword(registracijaDTO.getPassword());
+        System.out.println(registracijaDTO.getPassword());
+        noviKorisnik.setPassword(passwordEncoder.encode(registracijaDTO.getPassword()));
         noviKorisnik.setIme(registracijaDTO.getIme());
         noviKorisnik.setPrezime(registracijaDTO.getPrezime());
         noviKorisnik.setBlokiran(false);
@@ -98,6 +128,8 @@ public class KorisnikController {
 
             prodavac.setAdresa(registracijaDTO.getAdresa());
             prodavac.setEmail(registracijaDTO.getEmail());
+            prodavac.setNaziv(registracijaDTO.getNaziv());
+            prodavac.setPoslujeOd(java.sql.Date.valueOf(java.time.LocalDate.now()));
             prodavac.setKorisnik(noviKorisnik);
 
             prodavacService.save(prodavac);
@@ -118,6 +150,9 @@ public class KorisnikController {
     @PostMapping("/prijava")
     public ResponseEntity<String> prijava(@RequestBody KorisnikDTO userDto) {
         Korisnik k = userService.findByUsername(userDto.getUsername());
+        if (k == null) {
+            return ResponseEntity.notFound().build();
+        }
         if (k.isBlokiran()) {
             return ResponseEntity.notFound().build();
         }

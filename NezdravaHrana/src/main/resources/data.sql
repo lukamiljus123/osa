@@ -9,12 +9,16 @@ INSERT INTO korisnik (ime, prezime, username, password, blokiran, roles)
 VALUES ('Мирко', 'Мирковић', 'mirkolegenda', '$2y$12$tGSYeNdNvspuX/8.UY4XQOetDM9d1Kz4gCaa5TIiGnu/leq3bmUYq', false, 'PRODAVAC');
 INSERT INTO prodavac (korisnik_id, posluje_od, email, adresa, naziv)
 VALUES (2, '2021-04-10', 'mirkom@gmail.com', 'Змајева 117', 'Миркомаркет');
+INSERT INTO korisnik (ime, prezime, username, password, blokiran, roles)
+VALUES ('Петар', 'Петровић', 'petarp', '$2y$12$tGSYeNdNvspuX/8.UY4XQOetDM9d1Kz4gCaa5TIiGnu/leq3bmUYq', false, 'PRODAVAC');
+INSERT INTO prodavac (korisnik_id, posluje_od, email, adresa, naziv)
+VALUES (3, '2021-05-10', 'petarp@gmail.com', 'Светосавска 117', 'Лоше палачинке Д.О.О.');
 
 -- KUPCI
 INSERT INTO korisnik (ime, prezime, username, password, blokiran, roles)
 VALUES ('Јована', 'Јовановић', 'jovanaj', '$2y$12$tGSYeNdNvspuX/8.UY4XQOetDM9d1Kz4gCaa5TIiGnu/leq3bmUYq', false, 'KUPAC');
 INSERT INTO kupac (korisnik_id, adresa)
-VALUES (3, 'Змајева 19');
+VALUES (4, 'Змајева 19');
 
 -- ARTIKLI
 INSERT INTO artikal (naziv, opis, cena, putanja_slike, prodavac_korisnik_id)
@@ -26,11 +30,11 @@ VALUES ('Еурокрем', 'Предивна је 🥺', 120, 'https://pbs.twim
 INSERT INTO artikal (naziv, opis, cena, putanja_slike, prodavac_korisnik_id)
 VALUES ('Еурокрем, плазма', 'Е ова је најбоља убедљиво', 130, 'https://pbs.twimg.com/media/DZJkggYWkAEOjSg.jpg', 2);
 INSERT INTO artikal (naziv, opis, cena, putanja_slike, prodavac_korisnik_id)
-VALUES ('Џем', 'Боља је она са еурокремом', 110, 'https://www.oetker.rs/Recipe/Recipes/oetker.rs/rs-sr/baking/image-thumb__53430__RecipeDetailsLightBox/palacinke-sa-dzemom-od-sljiva-i-oraha.jpg', 2);
+VALUES ('Џем', 'Боља је она са еурокремом', 110, 'https://www.oetker.rs/Recipe/Recipes/oetker.rs/rs-sr/baking/image-thumb__53430__RecipeDetailsLightBox/palacinke-sa-dzemom-od-sljiva-i-oraha.jpg', 3);
 INSERT INTO artikal (naziv, opis, cena, putanja_slike, prodavac_korisnik_id)
-VALUES ('Џем, кокос', 'А океј је', 140, 'https://pizzeriajimmy.rs/wp-content/uploads/2020/02/slatka-palacinka-kokos.jpg', 2);
+VALUES ('Џем, кокос', 'Чудан flex, али у реду', 140, 'https://pizzeriajimmy.rs/wp-content/uploads/2020/02/slatka-palacinka-kokos.jpg', 3);
 INSERT INTO artikal (naziv, opis, cena, putanja_slike, prodavac_korisnik_id)
-VALUES ('Слана палачинка 🤮', 'Молим Вас, немојте 😭', 10000, 'https://cdn.navidiku.rs/firme/proizvodgalerija3/galerija50028/velike/slana-palacinka-rakovica85987.jpg', 2);
+VALUES ('Слана палачинка 🤮', 'Молим Вас, немојте 😭', 10000, 'https://cdn.navidiku.rs/firme/proizvodgalerija3/galerija50028/velike/slana-palacinka-rakovica85987.jpg', 3);
 
 -- AKCIJE
 INSERT INTO akcija (procenat, od_kad, do_kad, tekst, prodavac_korisnik_id)

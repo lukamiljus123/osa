@@ -53,6 +53,7 @@ const Login =() => {
                         <Button variant="success" onClick={login}>
                             Пријави се
                         </Button>
+                        <a className="btn btn-primary" href="/registracija" role="button">Региструј се</a>
                     </Form>
                 </Col>
             </Row>

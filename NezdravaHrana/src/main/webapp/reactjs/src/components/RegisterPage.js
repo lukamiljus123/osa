@@ -1,6 +1,6 @@
 import React from "react";
 import {Card, Form, Col, Button} from "react-bootstrap";
-import MyToast from "../components/MyToast";
+import MyToast from "./Toasts/MyToast";
 import NezdravaHranaAxiosClient from "../services/clients/NezdravaHranaAxiosClient";
 
 class RegisterPage extends React.Component {
@@ -28,8 +28,8 @@ class RegisterPage extends React.Component {
 
         const user = {
             username: this.state.username,
-            password: this.state.sifra,
-            password2: this.state.sifra2,
+            password: this.state.password,
+            password2: this.state.password2,
             ime: this.state.ime,
             prezime: this.state.prezime,
             adresa: this.state.adresa,

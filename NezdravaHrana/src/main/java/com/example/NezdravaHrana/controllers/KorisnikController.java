@@ -110,7 +110,7 @@ public class KorisnikController {
 
     @PostMapping("/registracija/{isProdavac}")
     public ResponseEntity<RegistracijaDTO> registracija (@RequestBody RegistracijaDTO registracijaDTO,
-                                                        @PathVariable boolean isProdavac) {
+                                                         @PathVariable boolean isProdavac) {
         Korisnik noviKorisnik = new Korisnik();
 
         noviKorisnik.setUsername(registracijaDTO.getUsername());
@@ -147,6 +147,54 @@ public class KorisnikController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'PRODAVAC', 'KUPAC')")
+    @PutMapping("")
+    public ResponseEntity<RegistracijaDTO> izmenaLicnihPodataka (@RequestBody RegistracijaDTO registracijaDTO) {
+        Korisnik korisnik = korisnikRepository.findById(registracijaDTO.getId()).orElse(null);
+        if (korisnik == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (korisnik.isBlokiran()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (!registracijaDTO.getPassword().equals("")) {
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(registracijaDTO.getUsername(), registracijaDTO.getPassword());
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            try {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(registracijaDTO.getUsername());
+                korisnik.setPassword(passwordEncoder.encode(registracijaDTO.getPassword()));
+            } catch (UsernameNotFoundException e) {
+                return ResponseEntity.notFound().build();
+            }
+        }
+
+        korisnik.setIme(registracijaDTO.getIme());
+        korisnik.setPrezime(registracijaDTO.getPrezime());
+        korisnikRepository.save(korisnik);
+
+        if (korisnik.getRoles().equals(Roles.PRODAVAC)) {
+            Prodavac prodavac = prodavacService.findOne(registracijaDTO.getId());
+
+            prodavac.setAdresa(registracijaDTO.getAdresa());
+            prodavac.setEmail(registracijaDTO.getEmail());
+            prodavac.setNaziv(registracijaDTO.getNaziv());
+
+            prodavacService.save(prodavac);
+            return new ResponseEntity<RegistracijaDTO>(new RegistracijaDTO(prodavac), HttpStatus.CREATED);
+        } else if (korisnik.getRoles().equals(Roles.KUPAC)){
+            Kupac kupac = kupacService.findOne(registracijaDTO.getId());
+
+            kupac.setAdresa(registracijaDTO.getAdresa());
+
+            kupacService.save(kupac);
+            return new ResponseEntity<RegistracijaDTO>(new RegistracijaDTO(kupac), HttpStatus.CREATED);
+        }
+        return new ResponseEntity<RegistracijaDTO>(new RegistracijaDTO(korisnik), HttpStatus.CREATED);
+    }
+
     @PostMapping("/prijava")
     public ResponseEntity<String> prijava(@RequestBody KorisnikDTO userDto) {
         Korisnik k = userService.findByUsername(userDto.getUsername());
@@ -167,5 +215,20 @@ public class KorisnikController {
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/ulogovani")
+    public ResponseEntity<RegistracijaDTO> mojeInformacije(Authentication authentication) {
+        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+        String username = userPrincipal.getUsername();
+        Korisnik korisnik = userService.findByUsername(username);
+        if (korisnik.getRoles().equals(Roles.KUPAC)) {
+            Kupac kupac = kupacService.findOne(korisnik.getId());
+            return new ResponseEntity<>(new RegistracijaDTO(kupac),HttpStatus.OK);
+        } else if (korisnik.getRoles().equals(Roles.PRODAVAC)) {
+            Prodavac prodavac = prodavacService.findOne(korisnik.getId());
+            return new ResponseEntity<>(new RegistracijaDTO(prodavac),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new RegistracijaDTO(korisnik),HttpStatus.OK);
     }
 }

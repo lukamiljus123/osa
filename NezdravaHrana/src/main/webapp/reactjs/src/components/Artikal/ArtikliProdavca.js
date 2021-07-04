@@ -5,7 +5,6 @@ import MainPart from "../MainPart";
 import {TokenService} from "../../services/TokenService";
 import GoneToast from "../Toasts/GoneToast";
 import {AuthenticationService} from "../../services/AuthenticationService";
-import { withRouter } from "react-router";
 
 export default class ArtikliProdavca extends React.Component {
 

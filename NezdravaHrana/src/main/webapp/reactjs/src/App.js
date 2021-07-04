@@ -15,6 +15,7 @@ import {PrivateRoute} from "./PrivateRoute";
 import IzmenaArtikla from "./components/Artikal/IzmenaArtikla";
 import SviProdavci from "./components/SviProdavci";
 import BlokiranjeKorisnika from "./components/BlokiranjeKorisnika";
+import IzmenaLicnihPodataka from "./components/IzmenaLicnihPodataka";
 
 function App() {
   return (
@@ -41,6 +42,13 @@ function App() {
                 exact
                 path="/artikli/:id"
                 component={JedanArtikal}
+                roles={["ROLE_ADMINISTRATOR", "ROLE_PRODAVAC", "ROLE_KUPAC"]}
+            />
+
+            <PrivateRoute
+                exact
+                path="/izmena-licnih-podataka"
+                component={IzmenaLicnihPodataka}
                 roles={["ROLE_ADMINISTRATOR", "ROLE_PRODAVAC", "ROLE_KUPAC"]}
             />
 

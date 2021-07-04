@@ -1,9 +1,7 @@
 import React from 'react';
-import {Button, Card, Col, Container, Image, Row} from "react-bootstrap";
+import {Card, Container, Row} from "react-bootstrap";
 import NezdravaHranaAxiosClient from "../services/clients/NezdravaHranaAxiosClient";
 import MainPart from "./MainPart";
-import {TokenService} from "../services/TokenService";
-import GoneToast from "./Toasts/GoneToast";
 import {AuthenticationService} from "../services/AuthenticationService";
 
 export default class SviProdavci extends React.Component {

@@ -45,4 +45,12 @@ public class RegistracijaDTO {
         this.password = kupac.getKorisnik().getPassword();
         this.adresa = kupac.getAdresa();
     }
+
+    public RegistracijaDTO (Korisnik korisnik) {
+        this.id = korisnik.getId();
+        this.ime = korisnik.getIme();
+        this.prezime = korisnik.getPrezime();
+        this.username = korisnik.getUsername();
+        this.password = korisnik.getPassword();
+    }
 }

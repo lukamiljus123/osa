@@ -27,7 +27,12 @@ export default class SviArtikli extends React.Component {
                                     Додавање артикла
                                 </a>
                             }
-                            <Button style={{marginRight:"35px"}} className="btn btn-primary" onClick={() => AuthenticationService.logout()}>Одјави се</Button>
+                            <a className="btn btn-primary" href="/izmena-licnih-podataka" role="button">
+                                Измена личних података
+                            </a>
+                            <Button style={{marginRight:"35px"}} className="btn btn-primary" onClick={() => AuthenticationService.logout()}>
+                                Одјави се
+                            </Button>
                         </p>
                         :
                         <p>

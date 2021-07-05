@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {Card, Container, Table} from 'react-bootstrap';
+import BlokToast from "./Toasts/BlokToast";
 import NezdravaHranaAxiosClient from "../services/clients/NezdravaHranaAxiosClient";
+import MyToast from "./Toasts/MyToast";
 
 export default class BlokiranjeKorisnika extends Component{
     constructor(props) {
@@ -26,8 +28,11 @@ export default class BlokiranjeKorisnika extends Component{
     blokiraj(id) {
         NezdravaHranaAxiosClient.put("http://localhost:8080/korisnici/blokiraj/" + id)
             .then(response => {
-                if(response.data !=null){
-                    setTimeout(()=> this.setState({"show":false}),3000)
+                if (response.data != null) {
+                    this.setState({"show":true});
+                    setTimeout(() => this.setState({"show":false}),3000);
+                } else {
+                    this.setState({"show":false});
                 }
                 this.findAllKorisnici();
             });
@@ -38,6 +43,9 @@ export default class BlokiranjeKorisnika extends Component{
 
         return (
             <Container className="kontejner">
+                <div style={{"display":this.state.show ? "block" : "none"}}>
+                    <BlokToast children={{show: this.state.show, message:"Успешно сте блокирали корисника!"}}/>
+                </div>
                 <Card className={"border border-dark bg-dark text-white"}>
                     <Card.Header>
                         <h3>Листа неблокираних корисника</h3>

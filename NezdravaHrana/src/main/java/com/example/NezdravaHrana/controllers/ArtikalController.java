@@ -3,7 +3,6 @@ package com.example.NezdravaHrana.controllers;
 import com.example.NezdravaHrana.entity.Artikal;
 import com.example.NezdravaHrana.entity.DTO.ArtikalDTO;
 import com.example.NezdravaHrana.entity.Korisnik;
-import com.example.NezdravaHrana.entity.Prodavac;
 import com.example.NezdravaHrana.entity.Roles;
 import com.example.NezdravaHrana.service.ArtikalService;
 import com.example.NezdravaHrana.service.ProdavacService;

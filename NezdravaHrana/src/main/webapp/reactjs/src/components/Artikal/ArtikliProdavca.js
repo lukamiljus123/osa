@@ -11,7 +11,8 @@ export default class ArtikliProdavca extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            artikliLista : []
+            artikliLista : [],
+            stavkeLista : []
         };
     }
 
@@ -53,8 +54,23 @@ export default class ArtikliProdavca extends React.Component {
             });
     };
 
+    addStavka (event, id, kolicina) {
+        event.preventDefault();
+
+        let stavka = {
+            artikalId: id,
+            kolicina: kolicina
+        }
+
+        this.state.stavkeLista.push(stavka);
+        console.log("Ваша корпа:", this.state.stavkeLista);
+        //this.render();
+    };
+
     render() {
-        const {artikliLista} = this.state;
+        const {artikliLista, stavkeLista} = this.state;
+
+        //console.log(stavkeLista.length === 0);
 
         return (
             <Container className="kontejner">
@@ -63,7 +79,6 @@ export default class ArtikliProdavca extends React.Component {
                 </div>
                 <MainPart/>
                 <Card className={"border border-dark bg-dark text-white"}>
-
                     <Card.Header><h3>Листа артикала</h3></Card.Header>
                     <Card.Body>
                         <Row>
@@ -92,13 +107,41 @@ export default class ArtikliProdavca extends React.Component {
                                             <Button className="btn btn-primary" onClick={(e) => this.obrisiArtikal(e, artikal.id)}>Обриши</Button>
                                         </div>
                                     }
+                                    {
+                                        AuthenticationService.getRole() === "ROLE_KUPAC" &&
+                                        <div className="text-center">
+                                            <Button className="btn btn-primary" onClick={(e) => this.addStavka(e, artikal.id, 1)}>Додај у корпу</Button>
+                                        </div>
+                                    }
                                     </Col>
-                            ))
+                                ))
                             }
                         </Row>
                     </Card.Body>
                 </Card>
-                <p>Хвала што купујете код нас</p>
+                {
+                    AuthenticationService.getRole() === "ROLE_KUPAC" &&
+                    <Card className={"border border-dark bg-dark text-white"}>
+                        <Card.Header><h3>Ваша корпа</h3></Card.Header>
+                        <Card.Body>
+                            <Row>
+                                {
+                                stavkeLista.length === 0
+                                    ?
+                                    <div>Нема доступних, али боље проверите у конзоли :D :(</div>
+                                    :
+                                    stavkeLista.map((stavka)=>(
+                                        <Col key={stavka.artikalId} xs={6} md={4} style={{marginBottom:"45px"}}>
+                                            <h3>{stavka.artikalId}</h3>
+                                            <h3>{stavka.kolicina}</h3>
+                                        </Col>
+                                    ))
+                                }
+                            </Row>
+                        </Card.Body>
+                    </Card>
+                }
+                <p>Хвала што купујете код нас!</p>
             </Container>
         );
     }

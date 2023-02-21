@@ -15,4 +15,10 @@ public interface ArtikalEsRepository extends ElasticsearchRepository<ArtikalES, 
     ArtikalES getByJpaId(Integer id);
 
     List<ArtikalES> findAllByOpis(String opis);
+
+    List<ArtikalES> findByCenaBetween(Double cenaOd, Double cenaDo);
+
+    List<ArtikalES> findByCenaGreaterThan(Double cenaDo);
+
+    List<ArtikalES> findByCenaLessThan(Double cenaDo);
 }

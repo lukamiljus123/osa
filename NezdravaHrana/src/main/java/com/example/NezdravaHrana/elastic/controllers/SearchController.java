@@ -1,5 +1,6 @@
 package com.example.NezdravaHrana.elastic.controllers;
 
+import com.example.NezdravaHrana.elastic.controllers.dto.PriceRequestDTO;
 import com.example.NezdravaHrana.elastic.controllers.dto.TextRequestDTO;
 import com.example.NezdravaHrana.elastic.entity.ArtikalES;
 import com.example.NezdravaHrana.elastic.repository.ArtikalEsRepository;
@@ -26,18 +27,30 @@ public class SearchController {
     }
 
     @GetMapping("/naziv")
-    public List<ArtikalES> searchByNaziv(@RequestBody TextRequestDTO textRequestDTO){
-        System.out.println(textRequestDTO.getText());
-        System.out.println(artikalESService.findByNaziv(textRequestDTO.getText()).size());
-
+    public List<ArtikalES> searchByNaziv(@RequestBody TextRequestDTO textRequestDTO) {
         return artikalESService.findByNaziv(textRequestDTO.getText());
     }
 
     @GetMapping("/opis")
-    public List<ArtikalES> searchByOpis(@RequestBody TextRequestDTO textRequestDTO){
-        System.out.println(textRequestDTO.getText());
-        System.out.println(artikalESService.findByNaziv(textRequestDTO.getText()).size());
-
+    public List<ArtikalES> searchByOpis(@RequestBody TextRequestDTO textRequestDTO) {
         return artikalESService.findByOpis(textRequestDTO.getText());
+    }
+
+    @GetMapping("/cena")
+    public List<ArtikalES> searchByCena(@RequestBody PriceRequestDTO priceRequestDTO) {
+        Double cenaOd = priceRequestDTO.getCenaOd();
+        Double cenaDo = priceRequestDTO.getCenaDo();
+        if (cenaOd == null) {
+            if (cenaDo == null) {
+                return null;
+            }
+            else {
+                return artikalESService.findByCenaLessThan(cenaDo);
+            }
+        }
+        else if (cenaDo == null) {
+            return artikalESService.findByCenaGreaterThan(cenaOd);
+        }
+        return artikalESService.findByCenaBetween(cenaOd, cenaDo);
     }
 }

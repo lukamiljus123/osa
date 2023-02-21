@@ -82,6 +82,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/elastic/naziv").permitAll()
                 .antMatchers(HttpMethod.GET, "/elastic/artikli").permitAll()
                 .antMatchers(HttpMethod.GET, "/elastic/opis").permitAll()
+                .antMatchers(HttpMethod.GET, "/elastic/cena").permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
